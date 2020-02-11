@@ -1,0 +1,30 @@
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.exe.config
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.exe
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.Interpreter.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.Interpreter.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csprojResolveAssemblyReference.cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\Interop.WINGRAPHVIZLib.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csproj.ResolveComReference.cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\_Compi1_Proyecto2.Form1.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\_Compi1_Proyecto2.Properties.Resources.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csproj.GenerateResource.Cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.exe
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.pdb
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.exe.config
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\Interop.WINGRAPHVIZLib.dll
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csproj.ResolveComReference.cache
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.exe
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.pdb
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.exe
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\[Compi1]Proyecto2.pdb
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.dll
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.Interpreter.dll
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.pdb
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\bin\Debug\Irony.Interpreter.pdb
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csprojResolveAssemblyReference.cache
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\_Compi1_Proyecto2.Form1.resources
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\_Compi1_Proyecto2.Properties.Resources.resources
+C:\Users\pablo\Desktop\CompiJunio\[Compi1]Proyecto2\[Compi1]Proyecto2\obj\Debug\[Compi1]Proyecto2.csproj.GenerateResource.Cache

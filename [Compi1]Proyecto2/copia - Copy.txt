@@ -1,0 +1,53 @@
+﻿Vacio Principal(){
+	--> Resultado
+	Mostrar("{0}",Factorial(20));
+	--> Resultado 6765 
+	-->Mostrar("{0}",mostrarSerie(20));	
+	--> Resultado 
+	Mostrar("{0}",Division(200,5));
+}
+
+
+
+Entero  Factorial(Entero numero){
+    Es_verdadero( numero <= 1 ) {
+        Retorno 1;
+    }Es_falso{
+        Retorno numero*Factorial(numero-1);
+    }
+}
+
+Entero fibonacci(Entero n) {
+    Es_verdadero(n>1){
+       Retorno fibonacci(n-1) + fibonacci(n-2);  --> funciÃ³n recursiva
+    }
+
+    Es_verdadero(n==1) {  --> caso base
+        Retorno 1;
+    }
+
+    Es_verdadero(n==0){  --> caso base
+        Retorno 0;
+    }
+    Es_falso{ --> error
+        Mostrar("Debe ingresar un numero mayor o igual a 1");
+        Retorno -1; 
+    }
+}
+
+Vacio mostrarSerie(Entero tamanio){
+    
+	Texto cad = " ";
+    Para (Entero i = 0; i < tamanio; ++) {
+        cad = cad  + fibonacci(i); 
+    }
+    Mostrar("{0}",cad);
+}
+
+Entero Division (Entero a, Entero b){
+	Es_verdadero(b > a) {
+		Retorno 0;
+	}Es_falso{
+	    Retorno Division(a-b, b) + 1;
+    }
+}
