@@ -1,0 +1,106 @@
+
+package Analisis;
+
+import java.util.ArrayList;
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public ArrayList al = new ArrayList();
+    public static int dimX = 0; 
+    public static int dimY = 0; 
+    public ArrayList ins = new ArrayList();
+    public ArrayList erroresS = new ArrayList();
+    public ArrayList erroresS1 = new ArrayList();
+
+
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+        
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido." );
+
+
+        erroresS.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+
+        System.err.println("Error en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador '" +
+        s.value + "' no reconocido.");
+        
+        erroresS1.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /*public Nodo getRaiz(){
+        return action_obj.raiz;
+    }*/
+
+    
+
+:}
+
+
+action code {:
+    //Nodo raiz=null;
+    Sintactico sin = new Sintactico();
+    
+:}
+
+/*terminales reservados*/
+terminal String resPanel,Dibujar,Rojo,Azul,Amarillo,Naranja,Verde,Morado,Blanco,Negro,coma,dosPuntos,parA,parC,corA,corC,igual;
+
+terminal String entero,cadena,iden;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+
+
+/*
+* Aquí están los no terminales
+*/
+non terminal INICIO,PANEL,DIBUJO,DIBUJAR,COORDENADAS,COORDENADA,COLOR;
+
+
+/* Precedencia */
+//precedence left punto;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO;
+
+INICIO::=PANEL {:System.out.println(parser.ins.get(0));System.out.println(parser.ins.get(1));System.out.println(parser.ins.get(2));System.out.println(parser.ins.get(3));:};
+
+PANEL::=resPanel igual corA entero:val1 coma entero:val2 corC DIBUJO {:parser.dimX = Integer.parseInt(val1);parser.dimY = Integer.parseInt(val2);:};
+
+DIBUJO::=DIBUJO DIBUJAR
+        |DIBUJAR;
+
+DIBUJAR::=Dibujar igual corA COORDENADAS:val COLOR:col corC {:parser.ins.add(""+val+col);:};
+
+COORDENADAS::=COORDENADAS:val1 COORDENADA:val2  {:RESULT=""+val1+val2+",";:}
+            |COORDENADA:val  {:RESULT=val+",";:};
+
+COORDENADA::=parA entero:val1 coma entero:val2 parC coma  {:RESULT=val1+","+val2;:};
+
+COLOR::=Rojo:val {:RESULT=val;:}
+       |Azul:val {:RESULT=val;:}
+       |Amarillo:val {:RESULT=val;:}
+       |Naranja:val {:RESULT=val;:}
+       |Verde:val {:RESULT=val;:}
+       |Morado:val {:RESULT=val;:}
+       |Blanco:val {:RESULT=val;:}
+       |Negro:val {:RESULT=val;:};
