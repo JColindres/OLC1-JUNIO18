@@ -1,0 +1,100 @@
+﻿programa Archivo3 [ //Varios atributos y métodos/funciones 
+
+principal ()[ //Varias Sentencias 
+var i::=8;
+var j::=10;
+orden(i,j);
+imprimir("mezcla1: " + mezcla(1,i));
+i::=9;
+imprimir("mezcla2: " + mezcla(2,i));
+i::=10;
+imprimir("mezcla3: " + mezcla(3,i));
+imprimir("mezcla3: " + mezcla(4,i));
+i::=8;
+imprimir("mezcla1IF: " + mezclaif(1,i));
+i::=9;
+imprimir("mezcla2IF: " + mezclaif(2,i));
+i::=10;
+imprimir("mezcla3IF: " + mezclaif(3,i));
+imprimir("mezcla3IF: " + mezclaif(4,i));
+
+
+string mensaje::="Calificacion :D";
+mensaje ::= conca(mensaje);
+imprimir(mensaje);
+grafica();
+]
+
+
+string conca(var mensaje)[
+var men::="Esto es un mensaje que retorna:";
+
+men::=men+mensaje+" "+8.8;
+
+retornar men;
+
+]
+
+void orden(var a, var b)[
+var i,j;
+i::=0;
+
+MIENTRAS(i<a)[
+j::=i;
+MIENTRAS(j<b)[
+imprimir("posicion:"+j+","+i);
+j::=j+1;
+SI(j==8)[
+	salir;
+]
+]
+i::=i+1;
+]
+]
+
+double mezcla(var a, var i)[
+INTERRUMPIR (a) [ 
+CASO 1: retornar fibo(i);
+CASO 2:retornar factorial(i);
+CASO 3:retornar raiz(fibo(i),a)+raiz(factorial(i),a);
+DEFECTO:
+imprimir("no funciona :D");
+ ] 
+]
+
+
+double mezclaif(var a, var i)[
+SI(a==1)[
+retornar raiz(fibo(i),a);
+]SINO_SI(a==2)[ 
+retornar raiz(factorial(i),a);
+]SINO_SI(a==3)[ 
+retornar raiz(fibo(i),a)+raiz(factorial(i),a);
+]SINO[ 
+imprimir("no funciona :D");
+retornar 0; ]
+]
+
+
+double fibo(var a)[
+SI(a>1)[
+retornar fibo(a-2)+fibo(a-1);
+]SINO_SI(a==1)[ 
+retornar 1;
+]SINO[ retornar 0; ]
+]
+
+double factorial(var a)[
+SI(a>0)[
+retornar a*factorial(a-1);
+]SINO_SI(a==0)[ 
+retornar 1;
+]
+]
+
+void grafica()[
+ graficar("y","-0.03x^3 + 0.36x^2 - 1.25x + 4.39", 1, 17, "verde"); 
+ graficar("y","0.27x^3 - 9.3x^2 + 144.23x - 825.73", 17, 28, "rojo"); 
+ graficar("y","-0.35x^2 + 19.55x - 268.5", 28, 30, "azul"); 
+]
+]

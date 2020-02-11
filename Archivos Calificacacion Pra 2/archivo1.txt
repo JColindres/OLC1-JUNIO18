@@ -1,0 +1,87 @@
+﻿programa archivo1[
+    /*
+    Universidad de San Carlos de Guatemala
+    Facultad de ingenieria
+    Escuela de Ciencias y Sistemas
+    Organizacion de Lenguajes y Compiladores 1
+    Archivo de calificacion  de la primera practica
+    */
+
+    //Archivo de calificacion Nivel Facil
+    var calificacion::=0;
+    var titulo::="compiladores";
+    var l1,l2,l3;
+    principal()[
+        agrupacion();
+        concatenar(); 
+        operar();
+        relacionalLogico();
+    ]
+
+    void agrupacion()[
+        imprimir("resultado correcto 84 (texto quemado)");
+        imprimir((((1+2)*3)^2)+(16/4));
+    ]
+
+    void concatenar()[
+        var tituloAux::=titulo+" 1"+" | USAC";
+        imprimir("Debe imprimir: compiladores 1 | USAC (texto quemado)");
+        imprimir(tituloAux);
+        imprimir("Si imprimio correctamente tiene: declaracion y asignacion de variables globales");
+        imprimir("Utilizando como base si el resultado fue satisfactorio, calificar algunos puntos de la seccion manejo de metodos");
+    ]
+
+    void listaVars()[
+        l1::="Universidad";
+        l2::="De";
+        l3::="San Carlos";
+        imprimir("Resultado correcto: Universidad De San Carlos (texto quemado)");
+        imprimir(l1+l2+l3);
+        imprimir("Utilizando como base si el resultado fue satisfactorio, calificar algunos puntos de la seccion manejo de metodos");
+    ]
+
+    void operar()[
+        var num1::=1;
+        var num2::=2;
+        var num3::=3;
+        var num4::=0;
+num4 ::= num1+num2*num3;
+        imprimir("Resultado correcto es 7 (texto quemado)");
+        imprimir("El resultado es:"+num4);
+        
+    ]
+
+    void relacionalLogico()[
+        var rel1::=5;
+        SI(rel1==5)[
+            imprimir("funciono ==");
+        ]SINO[
+            imprimir("no funciono ==");
+        ]
+
+        SI(rel1>2 AND rel1<7)[
+            imprimir("Funciono < , > y AND");
+        ]SINO[
+            imprimir("No funciono < y >");
+        ]
+
+        SI(rel1>=2 OR rel1<=7)[
+            imprimir("Funciono <= , >= y OR");
+        ]SINO[
+            imprimir("No funciono <= , >= y OR ");
+        ]
+
+        SI(NOT rel1>=2 AND rel1<=7)[
+            imprimir("No Funciono <= , >= y OR");
+        ]SINO[
+            imprimir("Funciono <= , >= y OR ");
+        ]
+
+        imprimir("Utilizando como base si el resultado fue satisfactorio, calificar algunos puntos de la seccion manejo de flujo de control");
+
+    ]
+
+
+
+
+]

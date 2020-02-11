@@ -1,0 +1,146 @@
+<html>
+$$ String titulo=""; Double scoreVal=RESULT.score; int valor=1; String cadena="soy una cadena y cambiare mas adelante"; char
+r='R'; char e='e'; char p='p'; char o='o'; char rmin='r'; char t='t'; int cpcantidad=1+2*3-4*6/2; $$
+
+<head>
+    <title>$$ titulo=titulo+r; titulo=titulo+e; titulo=titulo+p+o; titulo=titulo+rmin; titulo=titulo+t+e+valor; Print(titulo); $$
+    </title>
+</head>
+
+<body>
+    <div>
+        $$ titulo="Score"; $$
+        <h1 align="centrado">$$titulo$$</h1>
+        <br>
+        <h3>Zcore: $$ Print(scoreVal); $$</h3>
+    </div>
+    <br>
+    <hr>
+    <br> $$ titulo="Clases"; $$
+    <div>
+        <h1 align="centrado" textcolor="blue"> $$Print(titulo+":");$$</h1>
+        <br> $$ String clase0=RESULT.clases[0].nombre; String cpclases=RESULT.clases; String clasesNombre=RESULT.clases.nombre;
+        cpcantidad=RESULT.clases.cantidad; $$
+        <p>
+            $$Print(clase0);$$
+        </p>
+        <br>
+        <p>
+            $$Print(cpclases);$$
+        </p>
+        <br>
+        <p>
+            $$Print(clasesNombre);$$
+        </p>
+        <br>
+        <p>
+            $$ cpCantidad++; cpCantidad=cpcantidad+1; $$ $$Print(cpcantidad-2);$$
+        </p>
+        <br>
+    </div>
+    <br>
+    <hr>
+    <br> $$ titulo="Metodos"; $$
+    <div>
+        <h1 align="centrado" textcolor="amarillo"> $$Print(titulo+":");$$</h1>
+        <br> $$ String metodo0=RESULT.metodos[0].nombre; String cpmetodos=RESULT.metodos; String metodosNombre=RESULT.metodos.nombre;
+        cpcantidad=RESULT.metodos.cantidad; $$
+        <p>
+            $$Print(clase0);$$
+        </p>
+        <br>
+        <p>
+            $$Print(cpmetodos);$$
+        </p>
+        <br>
+        <p>
+            $$Print(metodosNombre);$$
+        </p>
+        <br>
+        <p>
+            $$ cpCantidad++; cpCantidad=cpcantidad+1; $$ $$Print(cpcantidad-2);$$
+        </p>
+        <br>
+    </div>
+    <br>
+    <hr>
+    <br> $$ titulo="variables"; $$
+    <div>
+        <h1 align="centrado" textcolor="blue"> $$Print(titulo+":");$$</h1>
+        <br> $$ String variable0=RESULT.variables[0].nombre; String cpvariables=RESULT.variables; String variablesNombre=RESULT.variables.nombre;
+        cpcantidad=RESULT.variables.cantidad; $$
+        <p>
+            $$Print(variable0);$$
+        </p>
+        <br>
+        <p>
+            $$Print(cpvariable);$$
+        </p>
+        <br>
+        <p>
+            $$Print(variablesNombre);$$
+        </p>
+        <br>
+        <p>
+            $$ cpCantidad++; cpCantidad=cpcantidad+1; $$ $$Print(cpcantidad-2);$$
+        </p>
+        <br>
+    </div>
+    <br>
+    <hr>
+    <hr>
+    <hr>
+    <br>
+
+
+    <div>
+        <h1 align="centrado">Reporte 2</h1>
+        <hr>
+        <br>
+        <div>
+            <p textcolor="azul">
+                El score de copia es $$Print(scoreVal);$$, este resultado fue posible obtenerlo gracias al analizador de copias
+            </p>
+        </div>
+        <br>
+        <hr>
+        <br>
+        <div>
+            <h1>$$valor++;$$</h1>
+            <br>
+            <h3>Cantidad de copias de clases encontradas:</h3>
+            <br>
+            <h4 textcolor="rojo">$$Print(RESULT.clases.cantidad);$$</h4>
+            <br>
+            <h4>$$Print(RESULT.clases);$$</h4>
+            <hr>
+            <br>
+            <h1>$$valor=valor+1;$$</h1>
+            <br>
+            <h3>Cantidad de copias de metodos encontradas:</h3>
+            <br>
+            <h4 textcolor="rojo">$$Print(RESULT.metodos.cantidad);$$</h4>
+            <br>
+            <h4>$$Print(RESULT.metodos);$$</h4>
+            <hr>
+            <br>
+            <h1>$$valor=10*9+valor*2-93;$$</h1>
+            <br>
+            <h3>Cantidad de copias de variables encontradas:</h3>
+            <br>
+            <h4 textcolor="amarillo">$$Print(RESULT.variables.cantidad);$$</h4>
+            <br>
+            <h4 textcolor="amarillo">$$Print(RESULT.variables);$$</h4>
+        </div>
+        <br>
+        <div>
+            <p>
+                El analizador de copias ha encontrado que la clase $$Print(RESULT.clases[0].nombre);$$ fue detectada como copia, al menos
+                su nombre
+            </p>
+        </div>
+
+    </div>
+</body>
+
+</html>

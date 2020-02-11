@@ -1,0 +1,175 @@
+﻿/* LENGUAJES Y COMPILADORES 1 - PRIMER SEMESTRE - 2018 */
+/**********ARCHIVO DE CALIFICACION INTERMEDIO***********/
+
+//Inicio del programa===================================//
+
+ProGrama calificacion___2[
+
+
+//Area de declaración y asigacion de variables globales.
+var global_1,global_2,global_3;
+//Asignacion con concatenaciones y op basicas
+var String_global ::= "Hi "+"World "+20.18; //resultado Hi World 20.18
+VAR Double_global ::= 9.9*(2+2); // resutado 39.6
+VaR bOOl_global ::=  5>9 OR (true == false); //resultado true;
+
+
+//Validacion que imprimir solo venga dentro de metodos y funciones
+
+imprimir(global_1);
+imprimir(bool_global);
+
+
+void concatenar_correcto(var cad, var Valor )[
+	//este metodo se encarga de impimir los resultados correctos
+	imprimir("<------------------------------");
+	imprimir(cad+valor);
+	imprimir("------------------------------>");
+
+]
+
+void concatenar_incorrecto(var cad, var valor)[
+	//este metodo se encarga de impimir los resultados erroneos
+	imprimir("<==============================");
+	imprimir(cad+valor);
+	imprimir("==============================>");
+]
+
+void finalizar()[
+	//imprimimos el mensaje de salida y los valores finales de las variables gobales
+	Imprimir("----------------------------------------------");
+	imprimir("La cadena final es: "+String_global);
+	imprimir("El numero final es: "+double_global);
+	imprimir("El booleano final es: "+bool_global);
+	Imprimir("----------------------------------------------");
+	IMPRIMIR("============FIN DE CALIFICACION 2=============");
+]
+
+principal()[
+	
+	//llamamos primero a las aritmeticas;
+	aritmetica_media(1);
+	aritmetica_media(2);
+	aritmetica_media(3);
+	aritmetica_media(4);
+	// llamamos a la funcion boolena;
+	booleana_media(0);
+	//llamamos a la funcion de cadena;
+	imprimir(cadena_media("QUE SAD"));
+	//llamamos al metodo final
+	finalizar();
+]
+
+double aritmetica_media(var tipo)[
+	/* Se comprobaran las operaciones arimeticas 
+	y las sentencias si y sino y sino_si */
+
+	var multiplo ::= 5;
+	var global_1;
+	global_1 ::= "variable local con nombre global ";
+
+	si(tipo == 1)[
+		var operacion1;
+		operacion1 ::= 1.0;
+		operacion1 ::= operacion1 + operacion1;
+		operacion1 ::= operacion1 * multiplo;
+		operacion1 ::= operacion1 - multiplo;
+		si (operacion1 == 5)[
+			concatenar_correcto("valor correcto en op1 : ",operacion1);
+		]sino[
+			concatenar_incorrecto("valor erroneo en op1 : ",operacion1);
+		]
+
+		retornar 0+0+0+0+0+0*0-0(0^0.000);
+	]
+	sino_si(tipo == 2)[
+		var operacion1;
+		var divisor ::= 1+1;
+		operacion1 ::= multiplo * divisor;
+		divisor ::= divisor + 8;
+		divisor ::= operacion1 / divisor;
+		si (divisor == 1)[
+			concatenar_correcto("valor correcto en op2 : ",divisor);
+		]sino[
+			concatenar_incorrecto("valor erroneo en op2 : ",divisor);
+		]
+		retornar 0+0+0+0+0+0*0-0(0^0.000);
+	]
+	sino_si( tipo == 3)[
+		var operacion1;
+		operacion1 ::= multiplo;
+		operacion1 ::= operacion1^2 - 25;
+		si (operacion1 == 0)[
+			concatenar_correcto("valor correcto en op3 : ", operacion1);
+		]sino[
+			concatenar_incorrecto("valor erroneo en op3 : ",operacion1);
+		]
+		
+		retornar 0+0+0+0+0+0*0-0(0^0.000);
+	]
+	sino[
+		imprimir("El numero es mayor que 3");
+		var edad ::= 5*multiplo;
+		concatenar_correcto("Imprimira un numero : ",edad);
+		imprimir(global_1);
+		global_1 ::= "Su edad es: "+edad;
+		concatenar_correcto("Variable local / global "+global_1);
+		retornar 0+0+0+0+0+0*0-0(0^0.000);
+	]
+
+]
+
+String cadena_media(var val)[
+	retornar "Ella/Él  no te quiere..." + val;
+]
+
+bool booleana_media(var val)[
+	
+	var A ::= 5;
+	var B ::= 7;
+
+	var i ::= val;
+
+	mientras(i < 10)[
+		si( i <= A)[
+			imprimir("Iteracion "+i+" menor o igual que A");
+		]
+
+		si(i == A)[
+			imprimir("Iteracion "+i+" igual que A");
+		]
+
+		si( i >= A)[
+			imprimir("Iteracion "+i+" mayor o igual que A");
+		]
+
+		i::= i+1;
+	]
+
+	hacer[
+		var cad ::= "Esta en la iteracion i= "+i;
+		hacer[
+			var cad2 ::= cad + " | j = "+i ;
+			Hacer[
+				var cad3 ::= cad2 +" | k = "+i;
+				imprmir(cad3);
+				i ::= i -1;
+			]
+			mientras(i>B);
+			imprimir(cad2);
+			i::= i -1;
+		]
+		mietras(i>A)
+		imprimir(cad1);
+		i=i-1;
+	] 
+	mientras(i>0);
+
+	global_2 ::= false;
+	global_3 ::= true;
+
+	retornar global_1 OR (NOT Global_2) AND Not (global_1 or global_2);
+
+]
+
+]
