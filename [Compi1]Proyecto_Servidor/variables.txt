@@ -1,0 +1,1 @@
+ nombre,apellido,edad,cui,cuiAux,edadAux,apellidoAux,nombreAux,nombreMascota,edad,raza,tipo,fullName,lugar,saludar,

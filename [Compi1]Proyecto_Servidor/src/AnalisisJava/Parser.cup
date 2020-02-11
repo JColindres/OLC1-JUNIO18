@@ -1,0 +1,392 @@
+
+package Analisis;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public static ArrayList al = new ArrayList();
+    public ArrayList erroresS = new ArrayList();
+    public ArrayList erroresS1 = new ArrayList();
+    public String SCORE = " ";
+    public String CLASES = " ";
+    public String VARIABLES = " ";
+    public String METODOS = " ";
+    public static String COMENTARIOS = " ";
+    
+    public double score = 0;
+    public String clases = " ";
+    public String variables = " ";
+    public String metodos = " ";
+    public String comentarios = " ";
+    public String json1 = '"'+"score"+'"'+":[" + score + "],";
+    public String json2 = '"'+"Clases"+'"'+":[" + clases + "],";
+    public String json3 = '"'+"Variables"+'"'+":[" + variables + "],";
+    public String json4 = '"'+"Metodos"+'"'+":[" + metodos + "],";
+    public String json5 = '"'+"Comentarios"+'"'+":[" + comentarios + "]";
+    public String json = "{" + json1 + json2 + json3 + json4 + json5 + "}";
+
+    public int f = 0;
+    public int p = 0;
+
+
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+        
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido." );
+
+
+        erroresS.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+
+        System.err.println("Error en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador '" +
+        s.value + "' no reconocido.");
+        
+        erroresS1.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /*public Nodo getRaiz(){
+        return action_obj.raiz;
+    }*/
+
+    
+
+:}
+
+
+action code {:
+    //Nodo raiz=null;
+    Sintactico sin = new Sintactico();
+    ArrayList corchetes = new ArrayList();
+    
+:}
+
+/*terminales reservados*/
+terminal String corA,corC,resInt,resString,resPublic,resPrivate,resStatic,resBoolean,
+                resChar,resDouble,resLong,resIf,resElse,resWhile,resFor,resDo,
+                menorq,menorIgual,mayorq,mayorIgual,igual,coma,parentesisA,incre,decre,
+                parentesisC,mas,menos,mul,div,and,or,not,resReturn,resObject,resImport,
+                resProtected,resFinal,resClass,resSwitch,resCase,resBreak,resDefault,
+                puntoYcoma,dosPuntos,parA,parC,punto,modulo,resVoid;
+
+terminal String entero,decimal,cadena,bool,iden,caracter;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+
+
+/*
+* Aquí están los no terminales
+*/
+non terminal INICIO,IMPORT,CLASS,EXPIMP,EXP,VALOR,TIPO,ACCESO,COD,MET,DECLARACION,
+             ASIGNACION,SENTENCIAS,PARAM,COD2,LISTAID,OPREL,IGUALACION,SENTIF,LLAM,
+             SENTELSE,SENTFOR,SENTWHILE,SENTDO,SENTSWITCH,EXPSENT,SALIDA,CASES,MAIN,
+             INSTANCIA,LLAM2,DEFAULT,EXP2;
+
+
+/* Precedencia */
+precedence left mas, menos;
+precedence left mul, div;
+precedence left punto, modulo;
+precedence left mayorq, menorq;
+precedence left mayorIgual, menorIgual;
+precedence left and, or, not, parentesisC;
+precedence left entero,decimal,cadena,bool,iden,caracter,parentesisA;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
+
+INICIO::=IMPORT
+      |CLASS;
+
+IMPORT::= resImport EXPIMP puntoYcoma {:parser.al.add("importacion\n");:} INICIO;
+
+EXPIMP::= EXPIMP:val1 punto EXPIMP:val2 {:RESULT=val1+"."+val2;:}
+        |EXPIMP:val1 punto mul {:RESULT=val1+".*";:}
+        |iden:val {:RESULT=val;:};
+
+IGUALACION::= mas igual
+            | menos igual
+            | mul igual
+            | igual;
+
+EXP::=EXP:val1 mas EXP:val2 {:RESULT=val1+"+"+val2;:}
+    |EXP:val1 menos EXP:val2 {:RESULT=val1+"-"+val2;:}
+    |EXP:val1 mul EXP:val2 {:RESULT=val1+"*"+val2;:}
+    |EXP:val1 div EXP:val2 {:RESULT=val1+"/"+val2;:}
+    |EXP:val1 modulo EXP:val2 {:RESULT=val1+"/"+val2;:}
+    |parentesisA VALOR:val parentesisC {:RESULT=val;:}
+    |parentesisA VALOR:val mas EXP parentesisC {:RESULT=val;:}
+    |parentesisA VALOR:val menos EXP parentesisC {:RESULT=val;:}
+    |parentesisA VALOR:val mul EXP parentesisC {:RESULT=val;:}
+    |parentesisA VALOR:val div EXP parentesisC {:RESULT=val;:}
+    |parentesisA VALOR:val modulo EXP parentesisC {:RESULT=val;:}
+    |EXP LLAM2
+    |VALOR incre
+    |VALOR decre 
+    |VALOR:val {:RESULT=val;:};
+
+EXPSENT::= and OPREL
+         | or OPREL
+         | not OPREL
+         | OPREL
+         |;
+
+OPREL::=EXP mayorq EXP EXPSENT
+       |EXP menorq EXP EXPSENT
+       |EXP mayorIgual EXP EXPSENT
+       |EXP menorIgual EXP EXPSENT
+       |EXP igual igual EXP EXPSENT
+       |EXP not igual EXP EXPSENT
+       |EXP;
+
+VALOR::=entero:val {:RESULT=val;:} 
+        |decimal:val {:RESULT=val;:}
+        |cadena:val {:RESULT=val;:}
+        |bool:val {:RESULT=val;:}
+        |iden:val {:RESULT=val;:}
+        |caracter:val {:RESULT=val;:};
+
+CLASS::= ACCESO resClass iden:val parA {:parser.al.add("inicio de la clase\n");
+                                        parser.clases+="{"+'"'+"Nombre"+'"'+":"+'"'+val+'"'+"}";
+                                        parser.json2 = '"'+"Clases"+'"'+":[" + parser.clases + "],";
+                                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                                        parser.CLASES += val + ",";:} 
+         COD parC {:parser.al.add("fin de la clase\n");String nomb = parser.COMENTARIOS;
+                        if(parser.comentarios==" "){
+                            parser.comentarios += "{"+'"'+"texto"+'"'+":"+'"'+nomb+'"'+"}";
+                            parser.json5 = '"'+"Comentarios"+'"'+":[" + parser.comentarios + "]";
+                            parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                            parser.COMENTARIOS += nomb + ",";
+                        }else{
+                            parser.comentarios += ",{"+'"'+"texto"+'"'+":"+'"'+nomb+'"'+"}";
+                            parser.json5 = '"'+"Comentarios"+'"'+":[" + parser.comentarios + "]";
+                            parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                            parser.COMENTARIOS += nomb + ",";
+                        }
+                    String[] partCo = parser.COMENTARIOS.split(",");
+                    String[] partCl = parser.CLASES.split(",");
+                    String[] partMe = parser.METODOS.split(",");
+                    String[] partVa = parser.VARIABLES.split(",");
+                    parser.score = (double) (((partCo.length+1)*0.25)/((partCo.length+1)*2) + ((partVa.length+1)*0.25)/((partCo.length+1)*2) + ((partMe.length+1)*0.25)/((partCo.length+1)*2) + ((partCl.length+1)*0.25)/((partCo.length+1)*2));
+                    parser.json1 = '"'+"Score"+'"'+":[" + parser.score + "]";
+                    parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                    parser.SCORE += parser.score + ",";
+                    File fileName0 = new File("score.txt");
+                    try {
+                        BufferedWriter outFile = new BufferedWriter(new FileWriter(fileName0));
+                        outFile.write(parser.SCORE);
+                        outFile.close();
+                    } catch (IOException ex) {
+                    }
+                    File fileName = new File("clases.txt");
+                    try {
+                        BufferedWriter outFile = new BufferedWriter(new FileWriter(fileName));
+                        outFile.write(parser.CLASES);
+                        outFile.close();
+                    } catch (IOException ex) {
+                    }
+                    File fileName2 = new File("metodos.txt");
+                    try {
+                        BufferedWriter outFile = new BufferedWriter(new FileWriter(fileName2));
+                        outFile.write(parser.METODOS);
+                        outFile.close();
+                    } catch (IOException ex) {
+                    }
+                    File fileName3 = new File("variables.txt");
+                    try {
+                        BufferedWriter outFile = new BufferedWriter(new FileWriter(fileName3));
+                        outFile.write(parser.VARIABLES);
+                        outFile.close();
+                    } catch (IOException ex) {
+                    }
+                    File fileName4 = new File("comentarios.txt");
+                    try {
+                        BufferedWriter outFile = new BufferedWriter(new FileWriter(fileName4));
+                        outFile.write(parser.COMENTARIOS);
+                        outFile.close();
+                    } catch (IOException ex) {
+                    }:}
+        |;
+
+COD::=MET COD
+    |MAIN COD2
+    |DECLARACION COD
+    |ASIGNACION COD
+    |SENTENCIAS COD
+    |LLAM COD
+    |INSTANCIA COD
+    |;
+
+COD2::=DECLARACION COD2
+    |ASIGNACION COD2
+    |SENTENCIAS COD2
+    |LLAM COD2
+    |INSTANCIA COD2
+    |;
+
+MET::= ACCESO TIPO:tipo iden:nomb parentesisA PARAM:num parentesisC parA {:parser.al.add("inicio del metodo o funcion\n");:} COD2 SALIDA parC {:parser.al.add("fin del metodo o funcion\n");
+        if(parser.metodos==" "){
+            if(num==null){
+                parser.metodos += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+","+'"'+"Parametros"+'"'+":"+'"'+0+'"'+"}";
+                parser.json4 = '"'+"Metodos"+'"'+":[" + parser.metodos + "],";
+                parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                parser.METODOS += nomb + ",";
+            }else{
+                parser.metodos += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+","+'"'+"Parametros"+'"'+":"+'"'+1+'"'+"}";
+                parser.json4 = '"'+"Metodos"+'"'+":[" + parser.metodos + "],";
+                parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                parser.METODOS += nomb + ",";           
+            }
+        }else{
+            if(num==null){
+                parser.metodos += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+","+'"'+"Parametros"+'"'+":"+'"'+0+'"'+"}";
+                parser.json4 = '"'+"Metodos"+'"'+":[" + parser.metodos + "],";
+                parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                parser.METODOS += nomb + ",";
+            }else{
+                parser.metodos += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+","+'"'+"Parametros"+'"'+":"+'"'+1+'"'+"}";
+                parser.json4 = '"'+"Metodos"+'"'+":[" + parser.metodos + "],";
+                parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                parser.METODOS += nomb + ",";           
+            }
+        };:};
+
+MAIN::=resPublic resStatic resVoid iden parentesisA resString iden corA corC parentesisC parA {:parser.al.add("inicio del metodo main\n");:} COD2 parC {:parser.al.add("fin del metodo main\n");:};
+
+DECLARACION::= ACCESO TIPO:tipo LISTAID:nomb puntoYcoma {:parser.al.add("declaracion de variables\n");
+                    if(parser.variables==" "){
+                        parser.variables += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    }else{
+                        parser.variables += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    };:};
+
+ASIGNACION::= ACCESO TIPO:tipo LISTAID:nomb IGUALACION EXP puntoYcoma {:parser.al.add("asignacion a variables no declaradas\n");
+                    if(parser.variables==" "){
+                        parser.variables += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    }else{
+                        parser.variables += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    };:}
+            | LISTAID IGUALACION EXP puntoYcoma {:parser.al.add("asignacion a variables previamente declaradas\n");:};
+
+LISTAID::=iden:id2 {:RESULT=id2;:}
+        |iden:id coma LISTAID:id1 {:RESULT=id+","+id1;:};
+
+TIPO::=resInt:val {:RESULT=val;:}
+    |resString:val {:RESULT=val;:}
+    |resBoolean:val {:RESULT=val;:}
+    |resDouble:val {:RESULT=val;:}
+    |resChar:val {:RESULT=val;:}
+    |resLong:val {:RESULT=val;:}
+    |resObject:val {:RESULT=val;:}
+    |resVoid:val {:RESULT=val;:}|;
+
+ACCESO::=resPublic:val
+    |resPrivate:val 
+    |resProtected:val
+    |resStatic:val
+    |resFinal:val
+    |;
+
+PARAM::=EXP:val {:RESULT=val;:}
+       |EXP:val1 coma PARAM:val2 {:RESULT=val1+","+val2;:}
+       |TIPO:tipo EXP:nomb {:RESULT=nomb;
+                    if(parser.variables==" "){
+                        parser.variables += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    }else{
+                        parser.variables += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    };:} 
+       |TIPO:tipo EXP:nomb coma PARAM {:RESULT=nomb;
+                    if(parser.variables==" "){
+                        parser.variables += "{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    }else{
+                        parser.variables += ",{"+'"'+"Nombre"+'"'+":"+'"'+nomb+'"'+","+'"'+"Tipo"+'"'+":"+'"'+tipo+'"'+"}";
+                        parser.json3 = '"'+"Variables"+'"'+":[" + parser.variables + "],";
+                        parser.json = "{" + parser.json1 + parser.json2 + parser.json3 + parser.json4 + parser.json5 + "}";
+                        parser.VARIABLES += nomb + ",";
+                    };:} 
+       |VALOR mas PARAM
+       |VALOR menos PARAM
+       |VALOR mul PARAM
+       |VALOR div PARAM
+       |VALOR modulo PARAM
+       |;
+
+SENTENCIAS::=SENTIF
+            |SENTWHILE
+            |SENTFOR
+            |SENTSWITCH
+            |SENTDO;
+
+SENTIF::= resIf parentesisA EXPSENT parentesisC parA {:parser.al.add("inicio de la sentencia if\n");:} COD2 SALIDA parC {:parser.al.add("fin de la sentencia if\n");:}
+         |SENTIF SENTELSE;
+
+SENTELSE::=resElse parA {:parser.al.add("inicio de la sentencia else\n");:} COD2 SALIDA parC {:parser.al.add("fin de la sentencia else\n");:};
+
+SENTFOR::=resFor parentesisA ASIGNACION EXPSENT puntoYcoma EXP parentesisC parA {:parser.al.add("inicio de la sentencia for\n");:} COD2 SALIDA parC {:parser.al.add("fin de la sentencia for\n");:}
+         |resFor parentesisA ASIGNACION EXPSENT puntoYcoma EXP igual PARAM parentesisC parA {:parser.al.add("inicio de la sentencia for\n");:} COD2 SALIDA parC {:parser.al.add("fin de la sentencia for\n");:};
+
+SENTWHILE::=resWhile parentesisA EXPSENT parentesisC parA {:parser.al.add("inicio de la sentencia while\n");:} COD2 SALIDA parC {:parser.al.add("fin de la sentencia while\n");:};
+
+SENTDO::=resDo parA {:parser.al.add("inicio de la sentencia Do\n");:} COD2 SALIDA parC resWhile parentesisA EXPSENT parentesisC puntoYcoma {:parser.al.add("fin de la sentencia Do\n");:};
+
+SENTSWITCH::=resSwitch parentesisA EXP parentesisC parA {:parser.al.add("inicio de la sentencia switch\n");:} resCase VALOR dosPuntos COD2 SALIDA CASES DEFAULT parC {:parser.al.add("fin de la sentencia switch\n");:};
+
+CASES::= resCase VALOR dosPuntos COD2 SALIDA CASES
+        |;
+
+DEFAULT::= resDefault dosPuntos COD2 SALIDA
+        |;
+
+SALIDA::= resBreak puntoYcoma {:parser.al.add("break\n");:}
+        | resReturn EXP puntoYcoma {:parser.al.add("return\n");:}
+        |;
+
+INSTANCIA::=VALOR iden igual VALOR VALOR parentesisA PARAM parentesisC puntoYcoma {:parser.al.add("instancia\n");:};
+
+LLAM::=iden parentesisA PARAM parentesisC puntoYcoma {:parser.al.add("llamada de funcion\n");:};
+
+LLAM2::=parentesisA PARAM parentesisC;

@@ -1,0 +1,554 @@
+
+package Analisis;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public ArrayList al = new ArrayList();
+    public ArrayList erroresS = new ArrayList();
+    public ArrayList erroresS1 = new ArrayList();
+    static TablaSimbolos tabla = new TablaSimbolos();
+
+
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+        
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido." );
+
+
+        erroresS.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+
+        System.err.println("Error en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador '" +
+        s.value + "' no reconocido.");
+        
+        erroresS1.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /*public Nodo getRaiz(){
+        return action_obj.raiz;
+    }*/
+
+    
+
+:}
+
+
+action code {:
+    //Nodo raiz=null;
+    Sintactico sin = new Sintactico();
+    ArrayList corchetes = new ArrayList();
+    
+:}
+
+/*terminales reservados*/
+terminal String htmlA,htmlC,headA,headC,bodyA,bodyC,h1A,h1C,h2A,h2C,h3A,h3C,h4A,h4C,
+                h5A,h5C,h6A,h6C,titleA,titleC,tableA,tableC,thA,thC,tdA,tdC,trA,trC,
+                divA,divC,pA,pC,br,hr,col,txtcol,alig,fon,rojo,amarillo,azul,verde,gris,anaranjado,
+                morado,izquierda,derecha,centrado,afb,antiq,archi,arial,bf,bg,bl,bv,
+                calib,csm,cour,curs,deco,fanta,frank,garam,georg,helve,impact,minion,
+                modern,monos,os,pala,roman,sanss,serif,scri,swss,tms,tnr,tcm,ver,
+                resString,resInt,resDouble,resChar,resBoolean,resPrint,resResult,
+                resScore,mas,menos,mul,div,modulo,menorq,menorIgual,mayorq,mayorIgual,
+                igualIgual,noIgual,igual,puntoYcoma,parA,parC,corA,corC,
+                punto,incre,decre,masIgual,menosIgual,mulIgual,dobleDolar,
+                and,or,not,resVar,resMet,resClases,resNom,resCant;
+
+terminal String iden;
+terminal Integer entero;
+terminal Double decimal;
+terminal String cadena,bool,caracter,comia;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+
+
+/*
+* Aquí están los no terminales
+*/
+non terminal INICIO,CUERPOHTML,CUERPOBODY,EXP,VALOR,EHA,ATRIBUTOS,ETRA,ETDHA,ARIT,
+             EP,CUERPOP,EDIV,CUERPODIV,COLOR,ALINEACION,FUENTE,CPREPORT,CUERPOCPR,
+             ACCESOVARIABLE,DECLARACION,FUNCPRINT,CONTPRINT,TIPO,OPREL,OPLOG,OPASIG,
+             CUERPO,PYC,BODY;
+
+
+/* Precedencia */
+precedence left mas, menos;
+precedence left mul, div, modulo;
+precedence left entero, decimal, cadena, bool, iden, /*texto,*/ caracter;
+precedence left parA, parC;
+precedence left htmlC, headA, dobleDolar, bodyA, bodyC, puntoYcoma, titleC, headC;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO; // start with sirve para indicarle al parser con que produccion empezar
+
+INICIO::=htmlA:v1 {:parser.al.add(v1+"\n");:} CUERPOHTML htmlC:v3 {:parser.al.add(v3);:}
+        |CPREPORT;
+
+CUERPOHTML::=headA:v1 titleA:v2 {:parser.al.add(v1+"\n"+v2+"\n");:} CUERPO:v3 titleC:v4 headC:v5 {:parser.al.add("\n"+v4+"\n"+v5+"\n");:} CUERPOHTML 
+            |headA:v1 {:parser.al.add(v1+"\n");:} CUERPO  headC:v2 {:parser.al.add(v2+"\n");:} CUERPOHTML 
+            |BODY:v1 {:parser.al.add(v1+"\n");:} CUERPOBODY CUERPOHTML bodyC:v2 {:parser.al.add(v2+"\n");:} CUERPOHTML
+            |CPREPORT CUERPOHTML
+            |;
+
+BODY::=bodyA:v1 ATRIBUTOS:v2 mayorq:v3 {:if(v2==null){v2="";}RESULT=v1+" "+v2+v3;:};
+
+CUERPOBODY::=EHA CUERPOBODY
+            |tableA:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} ETRA tableC:d {:parser.al.add(d+"\n");:} CUERPOBODY
+            |br:d {:parser.al.add(d);:} CUERPOBODY
+            |hr:d {:parser.al.add(d);:} CUERPOBODY
+            |EP:d {:parser.al.add(d);:} CUERPOBODY
+            |EDIV CUERPOBODY
+            |CPREPORT CUERPOBODY
+            |;
+
+CUERPO::=EXP CUERPO
+        |CPREPORT CUERPO
+        |;
+
+EXP::=EXP:val1 mas EXP:val2 /*{:RESULT = new Integer(val1.hashCode()+val2.hashCode());:}*/
+    |EXP:val1 menos EXP:val2 
+    |EXP:val1 mul EXP:val2 
+    |EXP:val1 div EXP:val2 
+    |EXP:val1 modulo EXP:val2
+    |parA VALOR parC
+    |parA VALOR mas EXP parC
+    |parA VALOR menos EXP parC
+    |parA VALOR mul EXP parC
+    |parA VALOR div EXP parC
+    |parA VALOR modulo EXP parC
+    |iden incre
+    |iden decre 
+    |VALOR:v EXP:v1 {:if(v1==null){v1="";}parser.al.add(v+" ");:}
+    |VALOR:v {:parser.al.add(v+" ");:};
+
+VALOR::=entero:val {:RESULT=val;:} 
+        |decimal:val {:RESULT=val;:}
+        |cadena:val {:RESULT=val;:}
+        |bool:val {:RESULT=val;:}
+        |iden:val {:RESULT=val;:}
+        |caracter:val {:RESULT=val;:};
+
+EHA::=h1A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h1C:d {:parser.al.add(d+"\n");:}
+     |h2A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h2C:d {:parser.al.add(d+"\n");:}
+     |h3A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h3C:d {:parser.al.add(d+"\n");:}
+     |h4A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h4C:d {:parser.al.add(d+"\n");:}
+     |h5A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h5C:d {:parser.al.add(d+"\n");:}
+     |h6A:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO h6C:d {:parser.al.add(d+"\n");:};
+
+ETRA::=trA:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} ETDHA trC:d {:parser.al.add(d+"\n");:} ETRA
+      |;
+
+ETDHA::=tdA:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPO tdC:d {:parser.al.add(d+"\n");:} ETDHA
+       |thA:a mayorq:b {:parser.al.add(a+b+"\n");:} CUERPO thC:c {:parser.al.add(c+"\n");:} ETDHA
+       |;
+
+EP::=pA:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPOP pC:d {:parser.al.add(d+"\n");:};
+
+CUERPOP::=EXP br:a {:parser.al.add(a+"\n");:} CUERPOP
+         |EXP CUERPOP
+         |CPREPORT br:a {:parser.al.add(a+"\n");:} CUERPOP
+         |CPREPORT CUERPOP
+         |;
+
+EDIV::=divA:a ATRIBUTOS:b mayorq:c {:if(b==null){b="";}parser.al.add(a+b+c+"\n");:} CUERPODIV divC:d {:parser.al.add(d+"\n");:};
+
+CUERPODIV::=CUERPOBODY; 
+
+ATRIBUTOS::=col igual cadena:a ATRIBUTOS:b {:if(b==null){b="";}if(a=='"'+"rojo"+'"'){a="red";}if(a=='"'+"amarillo"+'"'){a="yellow";}
+                                            if(a=='"'+"azul"+'"'){a="blue";}if(a=='"'+"gris"+'"'){a="gray";}if(a=='"'+"anaranjado"+'"'){a="orange";}if(a=='"'+"morado"+'"'){a="purple";}
+                                            String[] parts = a.split("\"");RESULT=" style="+'"'+"color:"+parts[1]+'"'+b;:}
+           |txtcol igual cadena:a ATRIBUTOS:b {:if(b==null){b="";}if(a=='"'+"rojo"+'"'){a="red";}if(a=='"'+"amarillo"+'"'){a="yellow";}
+                                            if(a=='"'+"azul"+'"'){a="blue";}if(a=='"'+"gris"+'"'){a="gray";}if(a=='"'+"anaranjado"+'"'){a="orange";}if(a=='"'+"morado"+'"'){a="purple";}
+                                            String[] parts = a.split("\"");RESULT=" style="+'"'+"text-color:"+parts[1]+'"'+b;:}
+           |alig igual cadena:a ATRIBUTOS:b {:if(b==null){b="";}if(a=='"'+"izquierda"+'"'){a="left";}if(a=='"'+"derecha"+'"'){a="right";}if(a=='"'+"centrado"+'"'){a="center";}
+                                            String[] parts = a.split("\"");RESULT=" style="+'"'+"text-align:"+parts[1]+'"'+b;:} 
+           |fon igual cadena:a ATRIBUTOS:b {:if(b==null){b="";}String[] parts = a.split("\"");RESULT=" style="+'"'+"font-family:"+parts[1]+'"'+b;:} 
+         /*|col igual comia:a COLOR:b comia:c {:RESULT="style="+a+"color:"+b+c;:} ATRIBUTOS
+           |txtcol igual comia:a COLOR:b comia:c {:RESULT="style="+a+"text-color:"+b+c;:} ATRIBUTOS
+           |alig igual comia:a ALINEACION:b comia:c {:RESULT="style="+a+"text-align:"+b+c;:} ATRIBUTOS
+           |fon igual comia:a FUENTE:b comia:c {:RESULT="style="+a+"font-family:"+b+c;:} ATRIBUTOS*/
+           |;
+
+COLOR::=rojo:val {:RESULT=val;:}
+        |amarillo:val {:RESULT=val;:}
+        |azul:val {:RESULT=val;:}
+        |verde:val {:RESULT=val;:}
+        |gris:val {:RESULT=val;:}
+        |anaranjado:val {:RESULT=val;:}
+        |morado:val {:RESULT=val;:};
+
+ALINEACION::=izquierda
+            |derecha
+            |centrado;
+
+FUENTE::=afb:val {:RESULT=val;:}
+        |antiq:val {:RESULT=val;:}
+        |archi:val {:RESULT=val;:}
+        |arial:val {:RESULT=val;:}
+        |bf:val {:RESULT=val;:}
+        |bg:val {:RESULT=val;:}
+        |bl:val {:RESULT=val;:}
+        |bv:val {:RESULT=val;:}
+        |calib:val {:RESULT=val;:}
+        |csm:val {:RESULT=val;:}
+        |cour:val {:RESULT=val;:}
+        |curs:val {:RESULT=val;:}
+        |deco:val {:RESULT=val;:}
+        |fanta:val {:RESULT=val;:}
+        |frank:val {:RESULT=val;:}
+        |garam:val {:RESULT=val;:}
+        |georg:val {:RESULT=val;:}
+        |helve:val {:RESULT=val;:}
+        |impact:val {:RESULT=val;:}
+        |minion:val {:RESULT=val;:}
+        |modern:val {:RESULT=val;:}
+        |monos:val {:RESULT=val;:}
+        |os:val {:RESULT=val;:}
+        |pala:val {:RESULT=val;:}
+        |roman:val {:RESULT=val;:}
+        |sanss:val {:RESULT=val;:}
+        |serif:val {:RESULT=val;:}
+        |scri:val {:RESULT=val;:}
+        |swss:val {:RESULT=val;:}
+        |tms:val {:RESULT=val;:}
+        |tnr:val {:RESULT=val;:}
+        |tcm:val {:RESULT=val;:}
+        |ver:val {:RESULT=val;:};
+
+CPREPORT::=dobleDolar CUERPOCPR:v PYC dobleDolar {:parser.al.add(v+"\n");:};
+
+CUERPOCPR::=ACCESOVARIABLE:v {:RESULT=v;:} CUERPOCPR
+           |DECLARACION CUERPOCPR
+           |FUNCPRINT:v {:RESULT=v;:} CUERPOCPR
+           |EXP:v {:RESULT=v;:} CUERPOCPR
+           |iden incre puntoYcoma CUERPOCPR
+           |iden decre puntoYcoma CUERPOCPR
+           |;
+
+FUNCPRINT::=resPrint parA CONTPRINT:v parC puntoYcoma {:if(v==null){v="";}RESULT=v;:};
+
+ACCESOVARIABLE::=resResult punto resScore 
+                        {:double s=0;StringBuilder sb0 = new StringBuilder();
+                        String pathScore = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\score.txt";
+                        File c0 = new File(pathScore);
+                        try {
+                            Scanner archivoScore = new Scanner(c0);
+                            while (archivoScore.hasNext()) {
+
+                                sb0.append(archivoScore.nextLine());
+                                sb0.append("\n");
+                            }
+                            archivoScore.close();
+                            String score = sb0.toString();
+                            String[] partsScore = score.split(",");
+                            for (int x = 0; x < partsScore.length - 1; x++) {
+                                if (!partsScore[x].equals("") || !partsScore[x].equals(" ")) {
+
+                                    s=Double.parseDouble(partsScore[x]);;
+                                    System.out.println(partsScore[x]);
+                                }
+                            }
+
+                        } catch (FileNotFoundException ex) {
+                        }RESULT=s;:}
+                |resResult punto resVar corA entero:indice corC punto resNom
+                        {:StringBuilder sb0 = new StringBuilder();
+                        String pathVar = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\variables.txt";
+                        File c0 = new File(pathVar);
+                        try {
+                            Scanner archivoVar = new Scanner(c0);
+                            while (archivoVar.hasNext()) {
+
+                                sb0.append(archivoVar.nextLine());
+                                sb0.append("\n");
+                            }
+                            archivoVar.close();
+                            String variables = sb0.toString();
+                            String[] partsVar = variables.split(",");
+                            for (int x = 0; x < partsVar.length - 1; x++) {
+                                if (!partsVar[x].equals("") || !partsVar[x].equals(" ") && x == indice) {
+
+                                    RESULT=partsVar[indice];
+                                    System.out.println(partsVar[indice]);
+                                    break;
+                                }
+                            }
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resVar
+                        {:StringBuilder sb0 = new StringBuilder();
+                        String pathVar = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\variables.txt";
+                        File c0 = new File(pathVar);
+                        try {
+                            Scanner archivoVar = new Scanner(c0);
+                            while (archivoVar.hasNext()) {
+
+                                sb0.append(archivoVar.nextLine());
+                                sb0.append("\n");
+                            }
+                            archivoVar.close();
+                            String variables = sb0.toString();
+                            System.out.println(variables);
+                            RESULT=variables;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resVar punto resNom
+                        {:StringBuilder sb0 = new StringBuilder();
+                        String pathVar = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\variables.txt";
+                        File c0 = new File(pathVar);
+                        try {
+                            Scanner archivoVar = new Scanner(c0);
+                            while (archivoVar.hasNext()) {
+
+                                sb0.append(archivoVar.nextLine());
+                                sb0.append("\n");
+                            }
+                            archivoVar.close();
+                            String variables = sb0.toString();
+                            System.out.println(variables);
+                            RESULT=variables;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resVar punto resCant
+                        {:StringBuilder sb0 = new StringBuilder();
+                        String pathVar = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\variables.txt";
+                        File c0 = new File(pathVar);
+                        try {
+                            Scanner archivoVar = new Scanner(c0);
+                            while (archivoVar.hasNext()) {
+
+                                sb0.append(archivoVar.nextLine());
+                                sb0.append("\n");
+                            }
+                            archivoVar.close();
+                            String variables = sb0.toString();
+                            String[] partsVar = variables.split(",");
+                            System.out.println(partsVar.length - 1);
+                            RESULT=partsVar.length-1;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resMet corA entero:indice corC punto resNom 
+                        {:StringBuilder sb2 = new StringBuilder();
+                        String pathMetodos = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\metodos.txt";
+                        File c2 = new File(pathMetodos);
+                        try {
+                            Scanner archivoMetodos = new Scanner(c2);
+                            while (archivoMetodos.hasNext()) {
+
+                                sb2.append(archivoMetodos.nextLine());
+                                sb2.append("\n");
+                            }
+                            archivoMetodos.close();
+                            String metodos = sb2.toString();
+                            String[] partsMetodos = metodos.split(",");
+                            for (int x = 0; x < partsMetodos.length - 1; x++) {
+                                if (!partsMetodos[x].equals("") || !partsMetodos[x].equals(" ") && x == indice) {
+
+                                    RESULT=partsMetodos[indice];
+                                    System.out.println(partsMetodos[indice]);
+                                    break;
+                                }
+                            }
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resMet
+                        {:StringBuilder sb2 = new StringBuilder();
+                        String pathMetodos = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\metodos.txt";
+                        File c2 = new File(pathMetodos);
+                        try {
+                            Scanner archivoMetodos = new Scanner(c2);
+                            while (archivoMetodos.hasNext()) {
+
+                                sb2.append(archivoMetodos.nextLine());
+                                sb2.append("\n");
+                            }
+                            archivoMetodos.close();
+                            String metodos = sb2.toString();
+                            System.out.println(metodos);
+                            RESULT=metodos;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resMet punto resNom
+                        {:StringBuilder sb2 = new StringBuilder();
+                        String pathMetodos = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\metodos.txt";
+                        File c2 = new File(pathMetodos);
+                        try {
+                            Scanner archivoMetodos = new Scanner(c2);
+                            while (archivoMetodos.hasNext()) {
+
+                                sb2.append(archivoMetodos.nextLine());
+                                sb2.append("\n");
+                            }
+                            archivoMetodos.close();
+                            String metodos = sb2.toString();
+                            System.out.println(metodos);
+                            RESULT=metodos;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resMet punto resCant
+                        {:StringBuilder sb2 = new StringBuilder();
+                        String pathMetodos = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\metodos.txt";
+                        File c2 = new File(pathMetodos);
+                        try {
+                            Scanner archivoMetodos = new Scanner(c2);
+                            while (archivoMetodos.hasNext()) {
+
+                                sb2.append(archivoMetodos.nextLine());
+                                sb2.append("\n");
+                            }
+                            archivoMetodos.close();
+                            String metodos = sb2.toString();
+                            String[] partsMetodos = metodos.split(",");
+                            System.out.println(partsMetodos.length - 1);
+                            RESULT=partsMetodos.length-1;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resClases corA entero:indice corC punto resNom
+                        {:StringBuilder sb = new StringBuilder();
+                        String pathClases = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\clases.txt";
+                        File c = new File(pathClases);
+                        try {
+                            Scanner archivoClase = new Scanner(c);
+                            while (archivoClase.hasNext()) {
+
+                                sb.append(archivoClase.nextLine());
+                                sb.append("\n");
+                            }
+                            archivoClase.close();
+                            String clases = sb.toString();
+                            String[] partsClases = clases.split(",");
+                            for (int x = 0; x < partsClases.length - 1; x++) {
+                                if (!partsClases[x].equals("") || !partsClases[x].equals(" ") && x == indice) {
+
+                                    RESULT=partsClases[indice];
+                                    System.out.println(partsClases[indice]);
+                                    break;
+                                }
+                            }
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resClases
+                        {:StringBuilder sb = new StringBuilder();
+                        String pathClases = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\clases.txt";
+                        File c = new File(pathClases);
+                        try {
+                            Scanner archivoClase = new Scanner(c);
+                            while (archivoClase.hasNext()) {
+
+                                sb.append(archivoClase.nextLine());
+                                sb.append("\n");
+                            }
+                            archivoClase.close();
+                            String clases = sb.toString();
+                            System.out.println(clases);
+                            RESULT=clases;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resClases punto resNom
+                        {:StringBuilder sb = new StringBuilder();
+                        String pathClases = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\clases.txt";
+                        File c = new File(pathClases);
+                        try {
+                            Scanner archivoClase = new Scanner(c);
+                            while (archivoClase.hasNext()) {
+
+                                sb.append(archivoClase.nextLine());
+                                sb.append("\n");
+                            }
+                            archivoClase.close();
+                            String clases = sb.toString();
+                            System.out.println(clases);
+                            RESULT=clases;
+
+                        } catch (FileNotFoundException ex) {
+                        }:}
+                |resResult punto resClases punto resCant
+                        {:StringBuilder sb = new StringBuilder();
+                        String pathClases = "C:\\Users\\pablo\\Desktop\\Compi Junio\\[Compi1]Proyecto\\clases.txt";
+                        File c = new File(pathClases);
+                        try {
+                            Scanner archivoClase = new Scanner(c);
+                            while (archivoClase.hasNext()) {
+
+                                sb.append(archivoClase.nextLine());
+                                sb.append("\n");
+                            }
+                            archivoClase.close();
+                            String clases = sb.toString();
+                            String[] partsClases = clases.split(",");
+                            System.out.println(partsClases.length - 1);
+                            RESULT=partsClases.length-1;
+
+                        } catch (FileNotFoundException ex) {
+                        }:};
+
+CONTPRINT::=EXP:e mas:m ACCESOVARIABLE:v {:if(e==null){e="";}if(m==null){m="";}if(v==null){v="";}RESULT=e+" "+v;:} 
+           |EXP:e OPREL:o {:if(e==null){e="";}if(o==null){o="";};:}
+           |ACCESOVARIABLE:v {:if(v==null){v="";}RESULT=v;:}
+           |OPLOG
+           |ARIT;
+
+DECLARACION::=TIPO iden:i OPASIG CONTPRINT:e puntoYcoma /*{:i.setValor(e);:}*/
+             |iden OPASIG CONTPRINT puntoYcoma;
+
+TIPO::=resInt:val 
+    |resString:val 
+    |resBoolean:val
+    |resDouble:val
+    |resChar:val;
+
+OPASIG::=masIgual
+        |menosIgual 
+        |mulIgual
+        |igual;
+
+OPREL::= menorq EXP OPREL
+       | mayorq EXP OPREL
+       | menorIgual EXP OPREL
+       | mayorIgual EXP OPREL
+       | igualIgual EXP OPREL
+       | noIgual EXP OPREL
+       |;
+
+OPLOG::=and ARIT
+       |or ARIT
+       |not ARIT
+       |;
+      
+ARIT::=parA EXP OPREL parC OPLOG;  
+
+PYC::=puntoYcoma
+     |;
