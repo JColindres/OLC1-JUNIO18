@@ -1,0 +1,157 @@
+
+package Analisis;
+
+import java.util.ArrayList;
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public ArrayList al = new ArrayList();
+    public ArrayList erroresS = new ArrayList();
+    public ArrayList erroresS1 = new ArrayList();
+
+
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+        
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido." );
+
+
+        erroresS.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+
+        System.err.println("Error en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador '" +
+        s.value + "' no reconocido.");
+        
+        erroresS1.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /*public Nodo getRaiz(){
+        return action_obj.raiz;
+    }*/
+
+    
+
+:}
+
+
+action code {:
+    //Nodo raiz=null;
+    Sintactico sin = new Sintactico();
+    
+:}
+
+/*terminales reservados*/
+terminal String Norte,Oeste,Sur,Este,coma,dosPuntos,parA,parC;
+
+terminal String entero,cadena,iden;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+
+
+/*
+* Aquí están los no terminales
+*/
+non terminal INICIO,DIRECCION;
+
+
+/* Precedencia */
+//precedence left punto;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO;
+
+INICIO::=iden:n1 parA entero:r1 coma DIRECCION:d1 parC coma parA entero:r2 coma DIRECCION:d2 parC dosPuntos
+         iden:n2 parA entero:r3 coma DIRECCION:d3 parC coma parA entero:r4 coma DIRECCION:d4 parC
+
+        {:double x1 = -10,x2 = 5,y1 = -4,y2 = 4,resultado = 0;
+          float resultado2 = 0;
+          if(d1=="O"){
+            x1 = Integer.parseInt(r1)*(-1);
+            if(d2=="S"){
+                y1 = Integer.parseInt(r2)*(-1);
+            }else if(d2=="N"){
+                y1 = Integer.parseInt(r2);
+            }else if(d2=="E"){
+                x1 = x1-Integer.parseInt(r2);
+            }
+          }else if(d1=="E"){
+            x1 = Integer.parseInt(r1);
+            if(d2=="S"){
+                y1 = Integer.parseInt(r2)*(-1);
+            }else if(d2=="N"){
+                y1 = Integer.parseInt(r2);
+            }else if(d2=="O"){
+                x1 = x1-Integer.parseInt(r2);
+            }
+          }else if(d1=="S"){
+            y1 = Integer.parseInt(r1)*(-1);
+            if(d2=="O"){
+                x1 = Integer.parseInt(r2)*(-1);
+            }else if(d2=="E"){
+                x1 = Integer.parseInt(r2);
+            }
+          }else if(d1=="N"){
+            y1 = Integer.parseInt(r1);
+            if(d2=="O"){
+                x1 = Integer.parseInt(r2)*(-1);
+            }else if(d2=="E"){
+                x1 = Integer.parseInt(r2);
+            }
+          }
+          if(d3=="O"){
+            x2 = Integer.parseInt(r3)*(-1);
+            if(d4=="S"){
+                y2 = Integer.parseInt(r4)*(-1);
+            }else if(d4=="N"){
+                y2 = Integer.parseInt(r4);
+            }
+          }else if(d3=="E"){
+            x2 = Integer.parseInt(r3);
+            if(d4=="S"){
+                y2 = Integer.parseInt(r4)*(-1);
+            }else if(d4=="N"){
+                y2 = Integer.parseInt(r4);
+            }
+          }else if(d3=="S"){
+            y2 = Integer.parseInt(r3)*(-1);
+            if(d4=="O"){
+                x2 = Integer.parseInt(r4)*(-1);
+            }else if(d4=="E"){
+                x2 = Integer.parseInt(r4);
+            }
+          }else if(d3=="N"){
+            y2 = Integer.parseInt(r3);
+            if(d4=="O"){
+                x2 = Integer.parseInt(r4)*(-1);
+            }else if(d4=="E"){
+                x2 = Integer.parseInt(r4);
+            }
+          }
+          resultado2 = (float)Math.sqrt(Math.pow(x2-x1,2)+ Math.pow(y2-y1,2));
+          System.out.println(n1+" y "+n2+" estan separados aprox. "+resultado2+"m.");:};
+
+DIRECCION::=Norte:val {:RESULT="N";:}
+            |Sur:val {:RESULT="S";:}
+            |Este:val {:RESULT="E";:}
+            |Oeste:val {:RESULT="O";:};
+
+/*Diego(10,O),(4,S):Fernanda(4,N),(5,E)  Diego(7,E),(2,O):Maria(4,S),(2,N)*/
