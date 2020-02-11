@@ -1,0 +1,293 @@
+
+package Analisis;
+
+import Analizador.Interfaz;
+import java.util.ArrayList;
+import java_cup.runtime.*;
+
+parser code
+{:
+
+    public static ArrayList al = new ArrayList();    
+    public static int metodo=0;
+    public static int funcionInt = 0;
+    public static int funcionBool = 0;
+    public static int funcionDouble = 0;
+    public static int funcionString = 0;
+    public static int funcionChar = 0;
+    public static int declaInt = 0;
+    public static int declaBool = 0;
+    public static int declaDouble = 0;
+    public static int declaString = 0;
+    public static int declaChar = 0;
+    public static int declaAsigInt = 0;
+    public static int declaAsigBool = 0;
+    public static int declaAsigDouble = 0;
+    public static int declaAsigString = 0;
+    public static int declaAsigChar = 0;
+    public static int si = 0;
+    public static int sino = 0;
+    public static int para = 0;
+    public static int mientras = 0;
+    public static int hacer = 0;
+    public static int selecc = 0;
+    public static int continuar = 0;
+    public static int interrumpir = 0;
+    public static int imprim = 0;
+    public static int impor = 0;
+    public ArrayList erroresS = new ArrayList();
+    public ArrayList erroresS1 = new ArrayList();
+
+
+    /**Metodo al que se llama automáticamente ante algún error sintactico.*/
+    public void syntax_error(Symbol s){
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+        
+        System.err.println("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido." );
+
+        Interfaz.jTextArea3.append("colinderes gay");
+        erroresS.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /**Metodo al que se llama en el momento en que ya no es posible una recuperación de
+    errores.*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        String lexema = s.value.toString();
+        int fila = s.right+1;
+        int columna = s.left+1;
+
+        System.err.println("Error en la Línea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador '" +
+        s.value + "' no reconocido.");
+        Interfaz.jTextArea3.append("colinderes gay");
+        erroresS1.add("Error en la Línea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador '"
+        +s.value + "' no reconocido.\n");
+    }
+
+    /*public Nodo getRaiz(){
+        return action_obj.raiz;
+    }*/
+
+    
+
+:}
+
+
+action code {:
+    //Nodo raiz=null;
+    Sintactico sin = new Sintactico();
+    
+:}
+
+/*terminales reservados*/
+terminal String resImport,resPrivate,resPublic,resProtected,resClass,resInt,resBoolean,
+                resString,resChar,resDouble,resObject,resIf,resElse,resFor,resWhile,resDo,resSwitch,
+                resCase,resContinue,resBreak,resReturn,resDefault,resVoid,resStatic,mas,menos,mul,div,modulo,
+                menorq,menorIgual,mayorq,mayorIgual,igual,igualIgual,diferente,coma,puntoYcoma,
+                dosPuntos,parA,parC,corA,corC,llaveA,llaveC,punto,incre,decre,and,or,not;
+
+terminal String entero,decimal,cadena,bool,iden,caracter;
+
+/*
+* Este terminal tiene un valor string. Recuerda que le dábamos el valor
+* en el código del analizador léxico, al darle como parámetro un valor
+* string al objeto Symbolo.
+*/
+
+
+/*
+* Aquí están los no terminales
+*/
+non terminal INICIO,IMPORT,CLASS,EXPIMP,EXP,VALOR,TIPO,ACCESO,COD,MET,DECLARACION,
+             ASIGNACION,SENTENCIAS,PARAM,COD2,LISTAID,OPREL,IGUALACION,SENTIF,LLAM,
+             SENTELSE,SENTFOR,SENTWHILE,SENTDO,SENTSWITCH,EXPSENT,SALIDA,CASES,MAIN,
+             INSTANCIA,LLAM2,DEFAULT,SENTIMP,BRECON;
+
+
+/* Precedencia */
+precedence left mas, menos;
+precedence left mul, div;
+precedence left punto, modulo;
+precedence left mayorq, menorq;
+precedence left mayorIgual, menorIgual;
+precedence left and, or, not, parC;
+precedence left entero,decimal,cadena,bool,iden,caracter,parA;
+
+/* ­­­­­­­­­­­­­­ Declaración de la gramática  ­­­­­­­­­­­ */
+start with INICIO;
+
+INICIO::=IMPORT
+      |CLASS;
+
+IMPORT::= resImport EXPIMP:val puntoYcoma {:parser.impor++;parser.al.add("importar "+val+";\n");:} INICIO;
+
+EXPIMP::= EXPIMP:val1 punto EXPIMP:val2 {:RESULT=val1+"."+val2;:}
+        |EXPIMP:val1 punto mul {:RESULT=val1+".*";:}
+        |iden:val {:RESULT=val;:};
+
+IGUALACION::= mas igual {:RESULT="+=";:}
+            | menos igual {:RESULT="-=";:}
+            | mul igual {:RESULT="*=";:}
+            | igual {:RESULT="=";:};
+
+EXP::=EXP:val1 mas EXP:val2 {:RESULT=val1+"+"+val2;:}
+    |EXP:val1 menos EXP:val2 {:RESULT=val1+"-"+val2;:}
+    |EXP:val1 mul EXP:val2 {:RESULT=val1+"*"+val2;:}
+    |EXP:val1 div EXP:val2 {:RESULT=val1+"/"+val2;:}
+    |EXP:val1 modulo EXP:val2 {:RESULT=val1+"/"+val2;:}
+    |parA VALOR:val parC {:RESULT="("+val+")";:}
+    |parA VALOR:val mas EXP:val2 parC {:RESULT="("+val+"+"+val2+")";:}
+    |parA VALOR:val menos EXP:val2 parC {:RESULT="("+val+"-"+val2+")";:}
+    |parA VALOR:val mul EXP:val2 parC {:RESULT="("+val+"*"+val2+")";:}
+    |parA VALOR:val div EXP:val2 parC {:RESULT="("+val+"/"+val2+")";:}
+    |parA VALOR:val modulo EXP:val2 parC {:RESULT="("+val+"%"+val2+")";:}
+    |VALOR:val1 parA PARAM:val2 parC {:if(val2==null){val2="";}RESULT=""+val1+"("+val2+")";:}
+    |VALOR:val incre {:RESULT=val+"++";:}
+    |VALOR:val decre {:RESULT=val+"--";:}
+    |VALOR:val {:RESULT=val;:};
+
+EXPSENT::= and OPREL:val {:RESULT=" && "+val;:}
+         | or OPREL:val {:RESULT=" || "+val;:}
+         | not OPREL:val {:RESULT="!"+val;:}
+         | OPREL:val {:RESULT=val;:}
+         |;
+
+OPREL::=EXP:val1 mayorq EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+">"+val2+e;:}
+       |EXP:val1 menorq EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+"<"+val2+e;:}
+       |EXP:val1 mayorIgual EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+">="+val2+e;:}
+       |EXP:val1 menorIgual EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+"<="+val2+e;:}
+       |EXP:val1 igualIgual EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+"=="+val2+e;:}
+       |EXP:val1 diferente EXP:val2 EXPSENT:e {:if(e==null){e="";}RESULT=val1+"!="+val2+e;:}
+       |EXP:val {:RESULT=val;:};
+
+VALOR::=entero:val {:RESULT=val;:} 
+        |decimal:val {:RESULT=val;:}
+        |cadena:val {:RESULT=val;:}
+        |bool:val {:RESULT=val;:}
+        |iden:val {:RESULT=val;:}
+        |caracter:val {:RESULT=val;:};
+
+CLASS::= ACCESO resClass iden:val llaveA {:parser.al.add("\nclase publica "+val+"{\n");:} COD llaveC {:parser.al.add("}");:}
+        |;
+
+COD::=MET COD
+    |MAIN COD
+    |DECLARACION COD
+    |ASIGNACION COD
+    |SENTENCIAS COD
+    |LLAM COD
+    |INSTANCIA COD
+    |error llaveC
+    |error puntoYcoma
+    |;
+
+COD2::=DECLARACION COD2
+    |ASIGNACION COD2
+    |SENTENCIAS COD2
+    |LLAM COD2
+    |INSTANCIA COD2
+    |BRECON COD2
+    |error llaveC
+    |error puntoYcoma
+    |;
+
+MET::= ACCESO:acc TIPO:tipo iden:nomb parA PARAM:num parC llaveA {:if(tipo=="entero"){parser.funcionInt++;}
+                                                                   if(tipo=="Texto"){parser.funcionString++;}
+                                                                   if(tipo=="booleano"){parser.funcionBool++;}
+                                                                   if(tipo=="decimal"){parser.funcionDouble++;}
+                                                                   if(tipo=="caracter"){parser.funcionChar++;}
+                                                                   if(acc=="publico"){acc="publica";}
+                                                                   if(acc=="privado"){acc="privada";}
+                                                                   if(acc=="protegido"){acc="protegida";}
+                                                                   if(num==null){num="";}parser.al.add("\n\tfuncion "+acc+" de "+tipo+" "+nomb+"("+num+"){\n");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:}
+      |ACCESO:acc resVoid:v iden:nomb parA PARAM:num parC llaveA {:parser.metodo++;if(num==null){num="";}parser.al.add("\n\tmetodo "+acc+" "+nomb+"("+num+"){\n");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:};
+
+MAIN::=resPublic resStatic resVoid iden parA resString corA corC iden parC llaveA {:parser.al.add("\n\tmetodo publico estatico principal(Texto[] args){\n");:} COD2 llaveC {:parser.al.add("\t}\n");:};
+
+DECLARACION::= ACCESO:acc TIPO:tipo LISTAID:nomb puntoYcoma {:if(tipo=="entero"){parser.declaInt++;System.out.println("enteros:"+parser.declaInt);}
+                                                              if(tipo=="Texto"){parser.declaString++;System.out.println("textos:"+parser.declaString);}
+                                                              if(tipo=="booleano"){parser.declaBool++;}
+                                                              if(tipo=="decimal"){parser.declaDouble++;}
+                                                              if(tipo=="caracter"){parser.declaChar++;}
+                                                              if(acc==null){acc="";}parser.al.add("\t"+tipo+" "+acc+" "+nomb+";\n");:};
+
+ASIGNACION::= ACCESO:acc TIPO:tipo LISTAID:nomb IGUALACION:ig EXP:exp puntoYcoma {:if(tipo=="entero"){parser.declaAsigInt++;}
+                                                                                   if(tipo=="Texto"){parser.declaAsigString++;}
+                                                                                   if(tipo=="booleano"){parser.declaAsigBool++;}
+                                                                                   if(tipo=="decimal"){parser.declaAsigDouble++;}
+                                                                                   if(tipo=="caracter"){parser.declaAsigChar++;}
+                                                                                   if(acc==null){acc="";}parser.al.add("\t"+tipo+" "+acc+" "+nomb+" "+ig+" "+exp+";\n");:}
+            | LISTAID:nomb IGUALACION:ig EXP:exp puntoYcoma {:parser.al.add("\t"+nomb+" "+ig+" "+exp+";\n");:};
+
+LISTAID::=iden:id2 {:RESULT=id2;:}
+        |iden:id coma LISTAID:id1 {:RESULT=id+","+id1;:};
+
+TIPO::=resInt:val {:RESULT="entero";:}
+    |resString:val {:RESULT="Texto";:}
+    |resBoolean:val {:RESULT="booleano";:}
+    |resDouble:val {:RESULT="decimal";:}
+    |resChar:val {:RESULT="caracter";:}
+    |resObject:val {:RESULT="Objeto";:}
+    |resVoid:val {:RESULT=val;:}|;
+
+ACCESO::=resPublic:val {:RESULT="publico";:}
+    |resPrivate:val {:RESULT="privado";:}
+    |resProtected:val {:RESULT="protegido";:}
+    |resStatic:val {:RESULT="estatico";:}
+    |;
+
+PARAM::=EXP:val {:RESULT=val;:}
+       |EXP:val1 coma PARAM:val2 {:RESULT=val1+","+val2;:}
+       |TIPO:tipo EXP:nomb {:RESULT=tipo+" "+nomb;:} 
+       |TIPO:tipo EXP:nomb coma PARAM:val {:RESULT=tipo+" "+nomb+","+val;:}
+       |VALOR:val1 mas PARAM:val2 {:RESULT=val1+"+"+val2;:}
+       |VALOR:val1 menos PARAM:val2 {:RESULT=val1+"-"+val2;:}
+       |VALOR:val1 mul PARAM:val2 {:RESULT=val1+"*"+val2;:}
+       |VALOR:val1 div PARAM:val2 {:RESULT=val1+"/"+val2;:}
+       |VALOR:val1 modulo PARAM:val2 {:RESULT=val1+"%"+val2;:}
+       |;
+
+SENTENCIAS::=SENTIF
+            |SENTWHILE
+            |SENTFOR
+            |SENTSWITCH
+            |SENTDO
+            |SENTIMP;
+
+SENTIMP::=iden punto iden punto iden parA EXP:exp parC puntoYcoma {:parser.imprim++;;parser.al.add("\tSistema.salida.imprimir("+exp+");\n");:};
+
+SENTIF::= resIf parA EXPSENT:exp parC llaveA {:parser.si++;parser.al.add("\tsi("+exp+"){\n\t");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:}
+         |SENTIF SENTELSE;
+
+SENTELSE::=resElse llaveA {:parser.sino++;parser.al.add("\tsino{\n\t");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:};
+
+SENTFOR::=resFor parA TIPO:tipo LISTAID:nomb IGUALACION:ig EXP:exp puntoYcoma OPREL:e puntoYcoma EXP:ex parC llaveA {:parser.para++;parser.al.add("\tpara("+tipo+" "+nomb+" = "+exp+";"+e+";"+ex+"){\n\t");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:}
+         |resFor parA TIPO:tipo LISTAID:nomb IGUALACION:ig EXP:exp puntoYcoma OPREL:e puntoYcoma EXP:ex igual PARAM:p parC llaveA {:parser.para++;parser.al.add("\tpara("+tipo+" "+nomb+" = "+exp+";"+e+";"+ex+"){\n\t");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:};
+
+SENTWHILE::=resWhile parA EXPSENT:e parC llaveA {:parser.mientras++;parser.al.add("\tmientras("+e+"){\n\t");:} COD2 SALIDA llaveC {:parser.al.add("\t}\n");:};
+
+SENTDO::=resDo llaveA {:parser.hacer++;parser.al.add("\thacer{\n\t");:} COD2 SALIDA llaveC resWhile parA EXPSENT:e parC puntoYcoma {:parser.al.add("}mientras("+e+");\n");:};
+
+SENTSWITCH::=resSwitch parA EXP:e parC llaveA {:parser.selecc++;parser.al.add("\tselecciona("+e+"){\n");:} resCase VALOR:v dosPuntos {:parser.al.add("\t\tcaso "+v+":\n\t");:} COD2 SALIDA CASES DEFAULT llaveC {:parser.al.add("\t}\n");:};
+
+CASES::= resCase VALOR:v dosPuntos {:parser.al.add("\t\tcaso "+v+":\n\t");:} COD2 SALIDA CASES
+        |;
+
+DEFAULT::= resDefault dosPuntos {:parser.al.add("\t\tdefecto:\n\t");:} COD2 SALIDA
+        |;
+
+SALIDA::= resReturn EXP:e puntoYcoma {:parser.al.add("\t\tretornar "+e+";\n");:}
+        | resReturn puntoYcoma {:parser.al.add("\t\tretornar;\n");:}
+        |;
+
+BRECON::= resBreak puntoYcoma {:parser.interrumpir++;parser.al.add("\t\tinterrumpir;\n");:}
+        | resContinue puntoYcoma {:parser.continuar++;parser.al.add("\t\tcontinuar;\n");:};
+
+INSTANCIA::=VALOR iden igual VALOR VALOR parA PARAM parC puntoYcoma {:parser.al.add("instancia\n");:};
+
+LLAM::=iden:nom parA PARAM:p parC puntoYcoma {:if(p==null){p="";}parser.al.add("\t"+nom+"("+p+");\n");:};
+
+LLAM2::=parA PARAM:p parC {:if(p==null){p="";}parser.al.add("("+p+")");:};

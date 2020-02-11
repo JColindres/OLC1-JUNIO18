@@ -1,0 +1,17 @@
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\[Compi1]Practica1.exe.config
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\[Compi1]Practica1.csprojResolveAssemblyReference.cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\Interop.WINGRAPHVIZLib.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\[Compi1]Practica1.csproj.ResolveComReference.cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\_Compi1_Practica1.Form1.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\_Compi1_Practica1.Properties.Resources.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\[Compi1]Practica1.csproj.GenerateResource.Cache
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\[Compi1]Practica1.exe
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\[Compi1]Practica1.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\Irony.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\Irony.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\[Compi1]Practica1.exe
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\[Compi1]Practica1.pdb
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\_Compi1_Practica1.Form2.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\obj\Debug\_Compi1_Practica1.Form3.resources
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\Irony.Interpreter.dll
+C:\Users\pablo\Desktop\Compi Junio\[Compi1]Practica1\[Compi1]Practica1\bin\Debug\Irony.Interpreter.pdb
